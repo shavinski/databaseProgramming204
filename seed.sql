@@ -1,4 +1,7 @@
 -- File for populating the data_programming_204 database
+
+
+
 -- Populate the author table
 INSERT INTO
     Author (

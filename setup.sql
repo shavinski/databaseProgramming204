@@ -1,3 +1,9 @@
+DROP TABLE Author CASCADE;
+DROP TABLE Book CASCADE;
+DROP TABLE Client CASCADE;
+DROP TABLE Borrower CASCADE;
+
+
 CREATE TABLE IF NOT EXISTS Author (
     author_id INT PRIMARY KEY,
     author_first_name VARCHAR(50),
@@ -9,6 +15,7 @@ CREATE TABLE IF NOT EXISTS Book (
     book_id INT PRIMARY KEY,
     book_title VARCHAR(50),
     author_id INT,
+    genre VARCHAR(50),
     FOREIGN KEY (author_id) REFERENCES Author(author_id)
 );
 
