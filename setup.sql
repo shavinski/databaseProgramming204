@@ -28,4 +28,3 @@ CREATE TABLE IF NOT EXISTS Borrower (
     FOREIGN KEY (client_id) REFERENCES Client(client_id),
     FOREIGN KEY (book_id) REFERENCES Book(book_id)
 );
-
