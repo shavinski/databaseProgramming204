@@ -1,4 +1,14 @@
 -- SQL queries for assignment
+
+-- Created Indexes
+-- Created Indexes on these tables and columns because I am frequently using these in my queries
+CREATE INDEX idx_book_id ON Book(book_id);
+CREATE INDEX idx_client_id ON Client(client_id);
+CREATE INDEX idx_client_id ON Borrower(client_id);
+CREATE INDEX idx_book_id ON Borrower(book_id);
+
+
+
 -- #1 Display all contents of the Clients table
 -- We start by selecting everything from Client table
 
@@ -7,15 +17,11 @@ FROM Client;
 
 -- #2 First names, last names, ages and occupations of all clients
 -- We select client first name, last name, and calculate the age pulling from Client table
--- We then group by everything to have non unique rows counted 
 
 SELECT client_first_name,
     client_last_name,
     2024 - client_dob AS client_age
-FROM Client
-GROUP BY client_first_name,
-    client_last_name,
-    client_age;
+FROM Client;
 
 -- #3 First and last names of clients that borrowed books in March 2018
 -- We will want to return the clients first names and last names
@@ -101,7 +107,7 @@ SELECT COUNT(B.genre) as most_popular_genre,
     B.genre
 FROM Borrower AS Bor
     JOIN Client AS C on C.client_id = Bor.client_id
-    JOIN Book as B on B.book_id = Bor.borrow_id
+    JOIN Book as B on B.book_id = Bor.book_id
 WHERE C.client_dob >= 1970
     AND C.client_dob <= 1980
 GROUP BY B.genre
@@ -166,6 +172,9 @@ HAVING COUNT(DISTINCT Bor.client_id) * 100 / (
         FROM Client
     ) >= 20;
 
+SELECT *
+FROM borrowed_by_20_percent;
+
 -- #11 The top month of borrows in 2017
 -- We will need to get the the total borrow count and the time of month of how many borrows occurred
 -- We will check that the year of borrows is in 2017
@@ -197,7 +206,7 @@ SELECT client_age,
     AVG(num_borrows) AS avg_borrows
 FROM (
         SELECT 2024 - C.client_dob AS client_age,
-            COUNT(Bor.borrow_id) as num_borrows
+            COUNT(DISTINCT Bor.borrow_id) / COUNT(DISTINCT C.client_id) AS num_borrows
         FROM Client AS C
             JOIN Borrower AS Bor ON Bor.client_id = C.client_id
         GROUP BY client_age
@@ -206,16 +215,24 @@ GROUP BY client_age
 ORDER BY client_age;
 
 -- #13 The oldest and the youngest clients of the library
--- We will use the MAX and MIN aggregate functions to get the oldest and youngest ages
+-- We will have two queries 
+-- We will use the first one to find the youngest client, including their names only
+-- We will use the second one to find the oldest client, including their names only
 
-SELECT MAX(2024 - client_dob) AS oldest,
-    MIN(2024 - client_dob) AS youngest
-FROM Client;
+SELECT client_first_name, client_last_name
+FROM Client
+ORDER BY (2024 - client_dob) ASC
+LIMIT 1;
+
+SELECT client_first_name, client_last_name
+FROM Client
+ORDER BY (2024 - client_dob) DESC
+LIMIT 1;
 
 -- #14 First and last names of authors that wrote books in more than one genre
 -- We will need the author first name, last name and the total count of genres they have written
 -- We will join Author on Book
--- We will then make sure that each author will have a count of genre that is equal or more than 2
+-- We will then make sure that each author will have a count of DISTINCT genre that is equal or more than 2
 
 SELECT A.author_first_name,
     A.author_last_name,
@@ -223,4 +240,4 @@ SELECT A.author_first_name,
 FROM Author AS A
     JOIN Book AS B ON B.author_id = A.author_id
 GROUP BY A.author_first_name, A.author_last_name
-HAVING COUNT(B.genre) >= 2;
+HAVING COUNT(DISTINCT B.genre) > 1;
