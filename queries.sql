@@ -211,6 +211,7 @@ ORDER BY client_age;
 SELECT MAX(2024 - client_dob) AS oldest,
     MIN(2024 - client_dob) AS youngest
 FROM Client;
+
 -- #14 First and last names of authors that wrote books in more than one genre
 -- We will need the author first name, last name and the total count of genres they have written
 -- We will join Author on Book
