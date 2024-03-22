@@ -7,8 +7,6 @@ CREATE INDEX idx_client_id ON Client(client_id);
 CREATE INDEX idx_client_id ON Borrower(client_id);
 CREATE INDEX idx_book_id ON Borrower(book_id);
 
-
-
 -- #1 Display all contents of the Clients table
 -- We start by selecting everything from Client table
 
